@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.13.4'
+          otp-version: '24'
+      - run: mix deps.get
+      - run: mix format --check-formatted
+      - run: mix deps.unlock --check-unused
+
+  test:
+    name: Test (OS ${{matrix.os}} | Elixir ${{matrix.elixir}} | OTP ${{matrix.otp}})
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, windows-2019]
+        include:
+          - elixir: '1.13.4'
+            otp: '24'
+          - elixir: '1.12.3'
+            otp: '24'
+    env:
+      MIX_ENV: test
+    steps:
+      - name: Configure Git
+        # doctest fails on Windows without
+        run: git config --global core.autocrlf input
+      - uses: actions/checkout@v2
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{matrix.elixir}}
+          otp-version: ${{matrix.otp}}
+      - run: mix deps.get --only test
+      - run: mix compile --warnings-as-errors
+      - run: mix test --cover --export-coverage ci --trace --warnings-as-errors
+      - run: mix test.coverage
+      - name: Coveralls
+        run: mix coveralls.github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate docs
+        run: |
+          mix docs
+          test -f doc/index.html && echo "doc/index.html exists."
+
+
+  dialyzer:
+    name: Dialyzer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.13.4'
+          otp-version: '24'
+      - uses: actions/cache@v2
+        with:
+          path: _build/${{env.MIX_ENV}}/dialyxir_*
+          key: ${{runner.os}}-mix-dialyxir
+      - run: mix deps.get
+      - run: mix dialyzer --list-unused-filters

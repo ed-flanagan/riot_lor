@@ -27,15 +27,15 @@ defmodule Riot.LoR.FactionTest do
 
   describe "attributes" do
     test "versions" do
-      assert Faction.versions() == 1..4
+      assert Faction.versions() == 1..5
     end
 
     test "ids" do
-      assert Faction.ids() == [0, 1, 2, 3, 4, 5, 6, 9, 7, 10]
+      assert Faction.ids() == [0, 1, 2, 3, 4, 5, 6, 9, 7, 10, 12]
     end
 
     test "codes" do
-      assert Faction.codes() == ["DE", "FR", "IO", "NX", "PZ", "SI", "BW", "MT", "SH", "BC"]
+      assert Faction.codes() == ["DE", "FR", "IO", "NX", "PZ", "SI", "BW", "MT", "SH", "BC", "RU"]
     end
 
     test "min_version" do

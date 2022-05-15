@@ -22,7 +22,9 @@ defmodule Riot.LoR.Faction do
     # Version 3
     {3, 7, "SH"},
     # Version 4
-    {4, 10, "BC"}
+    {4, 10, "BC"},
+    # Version 5
+    {5, 12, "RU"}
   ]
 
   # NOTE: assumes versions are contiguous
@@ -53,7 +55,7 @@ defmodule Riot.LoR.Faction do
   ## Examples
 
       iex> Riot.LoR.Faction.versions()
-      1..4
+      1..5
 
   """
   @doc since: "1.1.0"
@@ -66,7 +68,7 @@ defmodule Riot.LoR.Faction do
   ## Examples
 
       iex> Riot.LoR.Faction.ids()
-      [0, 1, 2, 3, 4, 5, 6, 9, 7, 10]
+      [0, 1, 2, 3, 4, 5, 6, 9, 7, 10, 12]
 
   """
   @doc since: "1.1.0"
@@ -79,7 +81,7 @@ defmodule Riot.LoR.Faction do
   ## Examples
 
       iex> Riot.LoR.Faction.codes()
-      ["DE", "FR", "IO", "NX", "PZ", "SI", "BW", "MT", "SH", "BC"]
+      ["DE", "FR", "IO", "NX", "PZ", "SI", "BW", "MT", "SH", "BC", "RU"]
 
   """
   @doc since: "1.1.0"
@@ -131,7 +133,7 @@ defmodule Riot.LoR.Faction do
   ## Examples
 
       iex> Riot.LoR.Faction.max_version()
-      4
+      5
 
   """
   @doc since: "1.0.0"

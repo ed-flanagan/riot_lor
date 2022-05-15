@@ -27,7 +27,23 @@ defmodule Riot.LoR.DeckCodeTest do
     test "invalid version" do
       [
         # Version 5
+        # Manually generate:
+        # <<1 <<< 4 ||| 5>> <> Enum.into([0, 0, 1, 1, 5, 0, 1], <<>>, &Riot.Util.Varint.LEB128.encode/1)
+        # |> Base.encode32(padding: false)
         "CUAAAAIBAUAAC"
+      ]
+      |> Enum.each(fn input ->
+        assert_raise FunctionClauseError, fn -> DeckCode.decode!(input) end
+      end)
+    end
+
+    test "invalid format" do
+      [
+        # Format 2
+        # Manually generate:
+        # <<2 <<< 4 ||| 5>> <> Enum.into([0, 0, 1, 1, 5, 0, 1], <<>>, &Riot.Util.Varint.LEB128.encode/1)
+        # |> Base.encode32(padding: false)
+        "EUAAAAIBAUAAC"
       ]
       |> Enum.each(fn input ->
         assert_raise FunctionClauseError, fn -> DeckCode.decode!(input) end

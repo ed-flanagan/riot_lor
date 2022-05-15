@@ -2,7 +2,7 @@ defmodule Riot.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/ed-flanagan/riot_lor"
-  @version "1.0.0"
+  @version "1.1.0"
 
   def project do
     [

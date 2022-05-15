@@ -19,7 +19,7 @@ by adding `:riot_lor` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:riot_lor, "~> 1.0.0"}
+    {:riot_lor, "~> 1.1.0"}
   ]
 end
 ```

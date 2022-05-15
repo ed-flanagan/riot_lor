@@ -9,6 +9,7 @@ defmodule Riot.LoR.Faction do
   @type t :: {version :: non_neg_integer, id :: non_neg_integer, code :: binary}
 
   @factions [
+    # Version 1
     {1, 0, "DE"},
     {1, 1, "FR"},
     {1, 2, "IO"},
@@ -21,7 +22,9 @@ defmodule Riot.LoR.Faction do
     # Version 3
     {3, 7, "SH"},
     # Version 4
-    {4, 10, "BC"}
+    {4, 10, "BC"},
+    # Version 5
+    {5, 12, "RU"}
   ]
 
   # NOTE: assumes versions are contiguous
@@ -31,10 +34,10 @@ defmodule Riot.LoR.Faction do
             |> (fn {f, l} -> Range.new(f, l) end).()
 
   # NOTE: does _not_ assume ids are contiguous, but are unique
-  @ids @factions |> Enum.map(fn {_v, i, _c} -> i end) |> Enum.sort()
+  @ids @factions |> Enum.map(fn {_v, i, _c} -> i end)
 
   # NOTE: assumes codes are unique. Ids should map to codes 1:1
-  @codes @factions |> Enum.map(fn {_v, _i, c} -> c end) |> Enum.sort()
+  @codes @factions |> Enum.map(fn {_v, _i, c} -> c end)
 
   @factions_by_id Map.new(@factions, fn {_v, i, _c} = f -> {i, f} end)
   @factions_by_code Map.new(@factions, fn {_v, _i, c} = f -> {c, f} end)
@@ -45,6 +48,45 @@ defmodule Riot.LoR.Faction do
   defguard is_id(v) when is_integer(v) and v in @ids
   @doc false
   defguard is_version(v) when is_integer(v) and v in @versions
+
+  @doc """
+  Returns the range of version numbers.
+
+  ## Examples
+
+      iex> Riot.LoR.Faction.versions()
+      1..5
+
+  """
+  @doc since: "1.1.0"
+  @spec versions() :: Range.t()
+  def versions, do: @versions
+
+  @doc """
+  Returns the list of faction ids
+
+  ## Examples
+
+      iex> Riot.LoR.Faction.ids()
+      [0, 1, 2, 3, 4, 5, 6, 9, 7, 10, 12]
+
+  """
+  @doc since: "1.1.0"
+  @spec ids() :: [non_neg_integer]
+  def ids, do: @ids
+
+  @doc """
+  Returns the list of faction codes
+
+  ## Examples
+
+      iex> Riot.LoR.Faction.codes()
+      ["DE", "FR", "IO", "NX", "PZ", "SI", "BW", "MT", "SH", "BC", "RU"]
+
+  """
+  @doc since: "1.1.0"
+  @spec codes() :: [String.t()]
+  def codes, do: @codes
 
   @doc """
   Get a Faction code from its id.
@@ -91,7 +133,7 @@ defmodule Riot.LoR.Faction do
   ## Examples
 
       iex> Riot.LoR.Faction.max_version()
-      4
+      5
 
   """
   @doc since: "1.0.0"

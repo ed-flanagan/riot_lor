@@ -58,6 +58,7 @@ jobs:
           test -f doc/index.html && echo "doc/index.html exists."
 
 
+  # https://github.com/jeremyjh/dialyxir#github-actions
   dialyzer:
     name: Dialyzer
     runs-on: ubuntu-latest
@@ -65,13 +66,19 @@ jobs:
       MIX_ENV: dev
     steps:
       - uses: actions/checkout@v2
-      - uses: erlef/setup-beam@v1
+      - id: beam
+        uses: erlef/setup-beam@v1
         with:
           elixir-version: '1.13.4'
           otp-version: '24'
-      - uses: actions/cache@v2
+      - id: plt_cache
+        uses: actions/cache@v2
         with:
           path: _build/${{env.MIX_ENV}}/dialyxir_*
-          key: ${{runner.os}}-mix-dialyxir
+          key: plt-${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}
+          restore-keys: plt-${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}
       - run: mix deps.get --only
+      - name: Create PLTs
+        if: steps.plt_cache.outputs.cache-hit != 'true'
+        run: mix dialyzer --plt
       - run: mix dialyzer --list-unused-filters

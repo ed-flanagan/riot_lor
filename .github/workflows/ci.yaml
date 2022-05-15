@@ -16,7 +16,7 @@ jobs:
         with:
           elixir-version: '1.13.4'
           otp-version: '24'
-      - run: mix deps.get
+      - run: mix deps.get --only
       - run: mix format --check-formatted
       - run: mix deps.unlock --check-unused
 
@@ -44,7 +44,7 @@ jobs:
         with:
           elixir-version: ${{matrix.elixir}}
           otp-version: ${{matrix.otp}}
-      - run: mix deps.get --only test
+      - run: mix deps.get --only
       - run: mix compile --warnings-as-errors
       - run: mix test --cover --export-coverage ci --trace --warnings-as-errors
       - run: mix test.coverage
@@ -61,6 +61,8 @@ jobs:
   dialyzer:
     name: Dialyzer
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: dev
     steps:
       - uses: actions/checkout@v2
       - uses: erlef/setup-beam@v1
@@ -71,5 +73,5 @@ jobs:
         with:
           path: _build/${{env.MIX_ENV}}/dialyxir_*
           key: ${{runner.os}}-mix-dialyxir
-      - run: mix deps.get
+      - run: mix deps.get --only
       - run: mix dialyzer --list-unused-filters

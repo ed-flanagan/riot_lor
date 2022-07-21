@@ -80,5 +80,7 @@ jobs:
       - run: mix deps.get --only
       - name: Create PLTs
         if: steps.plt_cache.outputs.cache-hit != 'true'
-        run: mix dialyzer --plt
-      - run: mix dialyzer --list-unused-filters
+        run: mix dialyzer --plt --format github
+        # `--force-check` should not be necessary here since it checks the hash
+        # https://github.com/jeremyjh/dialyxir/blob/231d61c77bb23f3015af87b4850fe7ebecd1e07d/lib/mix/tasks/dialyzer.ex#L250
+      - run: mix dialyzer --format github

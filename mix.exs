@@ -23,7 +23,10 @@ defmodule Riot.MixProject do
       # Coverage
       # https://github.com/parroty/excoveralls#mixexs
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [coveralls: :test]
+      preferred_cli_env: [coveralls: :test],
+
+      # Dialyzer
+      dialyzer: dialyzer()
     ]
   end
 
@@ -90,6 +93,12 @@ defmodule Riot.MixProject do
         Riot.Util.Varint.LEB128,
         Riot.Util.Varint.VLQ
       ]
+    ]
+  end
+
+  defp dialyzer do
+    [
+      list_unused_filters: true
     ]
   end
 end

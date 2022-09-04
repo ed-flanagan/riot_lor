@@ -3,7 +3,7 @@ defmodule Riot.LoR.DeckCode do
   Functions to encode/decode a LoR deck code.
   """
 
-  use Bitwise, only_operators: true
+  import Bitwise
 
   alias Riot.LoR.Card
   alias Riot.LoR.Deck

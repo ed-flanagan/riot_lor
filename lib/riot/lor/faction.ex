@@ -31,7 +31,7 @@ defmodule Riot.LoR.Faction do
   @versions @factions
             |> Enum.map(fn {v, _i, _c} -> v end)
             |> Enum.min_max()
-            |> (fn {f, l} -> Range.new(f, l) end).()
+            |> then(fn {f, l} -> Range.new(f, l) end)
 
   # NOTE: does _not_ assume ids are contiguous, but are unique
   @ids @factions |> Enum.map(fn {_v, i, _c} -> i end)

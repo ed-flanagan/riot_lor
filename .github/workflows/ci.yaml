@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+env:
+  DEFAULT_ELIXIR_VERSION: '1.14'
+  DEFAULT_OTP_VERSION: '25'
+
 jobs:
   lint:
     name: Lint
@@ -14,8 +18,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: erlef/setup-beam@v1
         with:
-          elixir-version: '1.13.4'
-          otp-version: '24'
+          elixir-version: ${{ env.DEFAULT_ELIXIR_VERSION }}
+          otp-version: ${{ env.DEFAULT_OTP_VERSION }}
       - run: mix deps.get --only
       - run: mix format --check-formatted
       - run: mix deps.unlock --check-unused
@@ -28,11 +32,14 @@ jobs:
       # Test each supported Elixir minor version. For each Elixir version,
       # use the latest OTP and latest of each supported OS
       # https://github.com/erlef/setup-beam#compatibility-between-operating-system-and-erlangotp
+      # https://hexdocs.pm/elixir/1.14.0/compatibility-and-deprecations.html#compatibility-between-elixir-and-erlang-otp
       matrix:
-        os: [ubuntu-20.04, windows-2022]
-        elixir: ['1.12.3', '1.13.4']
+        os: [ubuntu-22.04, windows-2022]
+        elixir: ['1.12', '1.13', '1.14']
         include:
+          - otp: '25'
           - otp: '24'
+            elixir: '1.12'
     env:
       MIX_ENV: test
     steps:
@@ -69,8 +76,8 @@ jobs:
       - id: beam
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: '1.13.4'
-          otp-version: '24'
+          elixir-version: ${{ env.DEFAULT_ELIXIR_VERSION }}
+          otp-version: ${{ env.DEFAULT_OTP_VERSION }}
       - id: plt_cache
         uses: actions/cache@v2
         with:

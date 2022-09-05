@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.1.1](v1.1.1)
+
+Released 2022-09-04
+
+### Enhancements
+
+* Support Elixir 1.14
+
 ## [v1.1.0](v1.1.0)
 
 Released 2022-05-14

@@ -2,9 +2,10 @@ defmodule Riot.Util.Varint.VLQTest do
   alias Riot.Util.Varint
   alias Riot.Util.Varint.VLQ
 
-  use Bitwise, only_operators: true
   use ExUnit.Case
   use ExUnitProperties
+
+  import Bitwise
 
   doctest VLQ
 

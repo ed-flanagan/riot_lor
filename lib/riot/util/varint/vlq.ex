@@ -6,7 +6,7 @@ defmodule Riot.Util.Varint.VLQ do
 
   alias Riot.Util.Varint
 
-  use Bitwise, only_operators: true
+  import Bitwise
 
   import Riot.Util.Varint, only: [has_octet: 1, is_pos_integer: 1]
 

@@ -2,7 +2,6 @@ defmodule Riot.Util.Varint.LEB128Test do
   alias Riot.Util.Varint
   alias Riot.Util.Varint.LEB128
 
-  use Bitwise, only_operators: true
   use ExUnit.Case
   use ExUnitProperties
 

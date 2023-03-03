@@ -6,4 +6,5 @@ updates:
     schedule:
       interval: "daily"
     labels:
-      - "mix dependencies"
+      - dependencies
+      - mix

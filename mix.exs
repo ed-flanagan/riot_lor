@@ -34,7 +34,7 @@ defmodule Riot.MixProject do
     [
       {:benchee, "~> 1.0", only: :dev, runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.1", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.1", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.14", only: :test, runtime: false},
       # NOTE: also `:dev` for formatter's `:import_deps`

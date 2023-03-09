@@ -1,0 +1,97 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  main:
+    strategy:
+      fail-fast: false
+      # Test each supported Elixir minor version. For each Elixir version,
+      # use the latest OTP and latest of each supported OS
+      # https://github.com/erlef/setup-beam#compatibility-between-operating-system-and-erlangotp
+      # https://hexdocs.pm/elixir/1.14.0/compatibility-and-deprecations.html#compatibility-between-elixir-and-erlang-otp
+      matrix:
+        os: [ubuntu-22.04, windows-2022]
+        elixir: ['1.12', '1.13', '1.14']
+        include:
+          - otp: '25'
+          - lint: true
+            coverage: true
+            docs: true
+            dialyzer: true
+            os: 'ubuntu-22.04'
+            elixir: '1.14'
+          - elixir: '1.12'
+            otp: '24'
+    runs-on: ${{matrix.os}}
+    env:
+      MIX_ENV: test
+    steps:
+      # Setup
+      - name: Configure Git
+        # doctest fails on Windows without
+        run: git config --global core.autocrlf input
+      - uses: actions/checkout@v3
+      - id: beam
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{matrix.elixir}}
+          otp-version: ${{matrix.otp}}
+      - id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            deps
+            _build
+          key: mix-${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ hashFiles('**/mix.lock') }}
+
+      # Install
+      - run: mix deps.get --only
+
+      # Linting
+      - run: mix format --check-formatted
+        if: matrix.lint
+      - run: mix deps.unlock --check-unused
+        if: matrix.lint
+      - run: mix credo list --min-priority 2 --format oneline
+        if: matrix.lint
+
+      # Compile
+      - run: mix deps.compile
+      - run: mix compile --warnings-as-errors
+
+      # Testing
+      - run: mix test --warnings-as-errors
+        if: ${{ ! matrix.coverage }}
+      - run: mix test --warnings-as-errors --trace --export-coverage test
+        if: matrix.coverage
+
+      # Coverage
+      - run: mix test.coverage
+        if: matrix.coverage
+      - run: mix coveralls.github
+        if: matrix.coverage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Docs
+      - name: Generate docs
+        run: |
+          mix docs
+          test -f doc/index.html && echo "doc/index.html exists."
+          test -f doc/Riot\ LoR.epub && echo "doc/Riot LoR.epub exists."
+        if: matrix.docs
+
+      # Dialyzer
+      # https://github.com/jeremyjh/dialyxir#github-actions
+      - name: Create PLTs
+        run: mix dialyzer --plt --format github
+        if: ${{ matrix.dialyzer && steps.cache.outputs.cache-hit != 'true' }}
+        # `--force-check` should not be necessary here since it checks the hash
+        # https://github.com/jeremyjh/dialyxir/blob/231d61c77bb23f3015af87b4850fe7ebecd1e07d/lib/mix/tasks/dialyzer.ex#L250
+      - run: mix dialyzer --format github
+        if: matrix.dialyzer

@@ -1,8 +1,9 @@
 # 🃏 Riot LoR deck code library ⚗️
 
+[![Package](https://img.shields.io/hexpm/v/riot_lor?logo=elixir)](https://hex.pm/packages/riot_lor)
 [![Docs](https://img.shields.io/badge/hex-docs-7851a9?logo=elixir)](https://hexdocs.pm/riot_lor)
-[![Build](https://github.com/ed-flanagan/riot_lor/actions/workflows/ci.yaml/badge.svg)](https://github.com/ed-flanagan/riot_lor/actions/workflows/ci.yaml)
-[![Coverage Status](https://coveralls.io/repos/github/ed-flanagan/riot_lor/badge.svg?branch=main)](https://coveralls.io/github/ed-flanagan/riot_lor?branch=main)
+[![Test](https://github.com/ed-flanagan/riot_lor/actions/workflows/test.yaml/badge.svg)](https://github.com/ed-flanagan/riot_lor/actions/workflows/test.yaml)
+[![Coverage](https://coveralls.io/repos/github/ed-flanagan/riot_lor/badge.svg?branch=main)](https://coveralls.io/github/ed-flanagan/riot_lor?branch=main)
 
 [Yet another](https://github.com/petter-kaspersen/lor-deck-codes-elixir)
 [Elixir](https://elixir-lang.org/)

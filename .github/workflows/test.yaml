@@ -19,12 +19,9 @@ jobs:
         elixir: ['1.12', '1.13', '1.14']
         include:
           - otp: '25'
-          - lint: true
-            coverage: true
-            docs: true
-            dialyzer: true
+          - elixir: '1.14'
             os: 'ubuntu-22.04'
-            elixir: '1.14'
+            primary: true
           - elixir: '1.12'
             otp: '24'
     runs-on: ${{matrix.os}}
@@ -49,32 +46,28 @@ jobs:
             _build
           key: mix-${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ hashFiles('**/mix.lock') }}
 
-      # Install
-      - run: mix deps.get --only
+      # Dependencies
+      - run: mix do deps.get --only $MIX_ENV, deps.compile
 
       # Linting
       - run: mix format --check-formatted
-        if: matrix.lint
-      - run: mix deps.unlock --check-unused
-        if: matrix.lint
+        if: matrix.primary
+      - run: mix do deps.get, deps.unlock --check-unused
+        # Ensure all dependencies are insalled before checking lock
+        if: matrix.primary
       - run: mix credo list --min-priority 2 --format oneline
-        if: matrix.lint
+        if: matrix.primary
 
       # Compile
-      - run: mix deps.compile
       - run: mix compile --warnings-as-errors
+        if: matrix.primary
 
       # Testing
       - run: mix test --warnings-as-errors
-        if: ${{ ! matrix.coverage }}
-      - run: mix test --warnings-as-errors --trace --export-coverage test
-        if: matrix.coverage
-
-      # Coverage
-      - run: mix test.coverage
-        if: matrix.coverage
-      - run: mix coveralls.github
-        if: matrix.coverage
+        if: ${{ ! matrix.primary }}
+      # Testing with coverage
+      - run: mix coveralls.github --warnings-as-errors --trace
+        if: matrix.primary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -84,14 +77,14 @@ jobs:
           mix docs
           test -f doc/index.html && echo "doc/index.html exists."
           test -f doc/Riot\ LoR.epub && echo "doc/Riot LoR.epub exists."
-        if: matrix.docs
+        if: matrix.primary
 
       # Dialyzer
       # https://github.com/jeremyjh/dialyxir#github-actions
       - name: Create PLTs
         run: mix dialyzer --plt --format github
-        if: ${{ matrix.dialyzer && steps.cache.outputs.cache-hit != 'true' }}
+        if: ${{ matrix.primary && steps.cache.outputs.cache-hit != 'true' }}
         # `--force-check` should not be necessary here since it checks the hash
         # https://github.com/jeremyjh/dialyxir/blob/231d61c77bb23f3015af87b4850fe7ebecd1e07d/lib/mix/tasks/dialyzer.ex#L250
       - run: mix dialyzer --format github
-        if: matrix.dialyzer
+        if: matrix.primary

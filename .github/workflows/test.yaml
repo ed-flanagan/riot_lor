@@ -48,6 +48,9 @@ jobs:
 
       # Dependencies
       - run: mix do deps.get --only $MIX_ENV, deps.compile
+        if: runner.os != 'windows'
+      - run: mix do deps.get --only $env:MIX_ENV, deps.compile
+        if: runner.os == 'windows'
 
       # Linting
       - run: mix format --check-formatted

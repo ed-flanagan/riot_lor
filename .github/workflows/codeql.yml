@@ -23,8 +23,7 @@ jobs:
     env:
       MIX_ENV: test
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - id: beam
         uses: erlef/setup-beam@v1
         with:
@@ -36,9 +35,8 @@ jobs:
           path: |
             deps
             _build
-          key: mix-${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ hashFiles(
-  '**/mix.lock') }}
-      - run: mix do deps.get --only $env:MIX_ENV, deps.compile
+          key: mix-${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ hashFiles('**/mix.lock') }}
+      - run: mix do deps.get --only $MIX_ENV, deps.compile
       - name: Generate SARIF file
         run: mix credo list --min-priority 2 --format sarif > results.sarif
       - name: Upload SARIF file

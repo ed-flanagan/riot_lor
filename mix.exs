@@ -38,7 +38,7 @@ defmodule Riot.MixProject do
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.14", only: :test, runtime: false},
       # NOTE: also `:dev` for formatter's `:import_deps`
-      {:stream_data, "~> 0.5", only: [:dev, :test], runtime: false}
+      {:stream_data, "~> 1.1", only: [:dev, :test], runtime: false}
     ]
   end
 
